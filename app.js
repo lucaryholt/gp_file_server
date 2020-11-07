@@ -12,27 +12,12 @@ const upload = multer({
 const request = require('request');
 
 app.get('/file/:filename', (req, res) => {
-    const fileName = req.params.filename;
-    const file = fs.readFileSync(path.join(__dirname, 'uploads', fileName));
+    const data = Buffer.from(fs.readFileSync(path.join(__dirname, 'uploads', req.params.filename)));
+
     return res.send({
-        file: file.toString()
+        file: data
     });
 });
-
-/*app.get('/test', (req, res) => {
-    request.post({
-        url: 'http://localhost:8080/upload',
-        formData: {
-            file: fs.createReadStream(path.join(__dirname, 'Moon.png')),
-            filetype: 'image/png',
-            filename: 'file',
-            channels: 'sample',
-            title: 'sampleTitle'
-        }
-    }, (error, response, body) => {
-        return res.send(response);
-    });
-}); */
 
 app.post('/file', upload.single('file'), (req, res) => {
     return res.send({
@@ -49,7 +34,7 @@ app.delete('/file/:filename', (req, res) => {
     });
 });
 
-const port = 8080;
+const port = process.env.PORT ? process.env.PORT : 80;
 
 app.listen(port, (error) => {
     if (error) console.log('Error starting server');
