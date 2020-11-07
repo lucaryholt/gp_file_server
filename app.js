@@ -23,8 +23,24 @@ app.post('/file', upload.single('file'), (req, res) => {
     return res.send({
         filename: req.file.filename,
         encoding: req.file.encoding,
-        mimetype: req.file.mimetype
+        mimetype: req.file.mimetype,
+        originalName: req.file.originalname
     });
+});
+
+app.post('/files', upload.array('files'), (req, res) => {
+    const files = [];
+
+    req.files.map(file => {
+        console.log(file);
+        files.push({
+            filename: file.filename,
+            encoding: file.encoding,
+            mimetype: file.mimetype,
+            originalName: file.originalname
+        });
+    });
+    return res.send({ files });
 });
 
 app.delete('/file/:filename', (req, res) => {
