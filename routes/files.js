@@ -4,22 +4,22 @@ const path = require('path');
 const fs = require('fs');
 
 let upload = null;
+let uploadPath = null;
 
 const multer = require('multer');
 if (process.env.UPLOAD_DIRECTORY_ABSOLUTE_PATH) {
-    upload = multer({
-        dest: process.env.UPLOAD_DIRECTORY_ABSOLUTE_PATH
-    });
+    uploadPath = process.env.UPLOAD_DIRECTORY_ABSOLUTE_PATH;
 } else {
-    upload = multer({
-        dest: path.join(__dirname, '..', process.env.UPLOAD_DIRECTORY_RELATIVE_PATH)
-    });
+    uploadPath = path.join(__dirname, '..', process.env.UPLOAD_DIRECTORY_RELATIVE_PATH);
 }
+upload = multer({
+    dest: uploadPath
+});
 
 const auth = require('./auth.js');
 
 router.get('/file/:filename', auth.authenticateToken, (req, res) => {
-    const data = Buffer.from(fs.readFileSync(path.join(__dirname, process.env.UPLOAD_DIRECTORY, req.params.filename)));
+    const data = Buffer.from(fs.readFileSync(path.join(uploadPath, req.params.filename)));
 
     return res.send({
         file: data
@@ -39,7 +39,7 @@ router.post('/files', auth.authenticateToken, upload.array('files'), (req, res) 
 });
 
 router.delete('/file/:filename', auth.authenticateToken, (req, res) => {
-    fs.unlinkSync(path.join(__dirname, process.env.UPLOAD_DIRECTORY, req.params.filename));
+    fs.unlinkSync(path.join(uploadPath, req.params.filename));
     return res.send({
         deleted: true
     });
