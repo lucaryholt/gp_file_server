@@ -9,7 +9,7 @@ app.use(auth.router);
 
 app.use(require('./routes/files.js'));
 
-const port = process.env.PORT ? process.env.PORT : 80;
+const port = process.env.ACCESS_PORT;
 
 app.listen(port, (error) => {
     if (error) console.log('Error starting server');

@@ -5,13 +5,13 @@ const fs = require('fs');
 
 const multer = require('multer');
 const upload = multer({
-    dest: path.join(__dirname, '../uploads')
+    dest: path.join(__dirname, process.env.UPLOAD_DIRECTORY)
 });
 
 const auth = require('./auth.js');
 
 router.get('/file/:filename', auth.authenticateToken, (req, res) => {
-    const data = Buffer.from(fs.readFileSync(path.join(__dirname, '../uploads', req.params.filename)));
+    const data = Buffer.from(fs.readFileSync(path.join(__dirname, process.env.UPLOAD_DIRECTORY, req.params.filename)));
 
     return res.send({
         file: data
@@ -31,7 +31,7 @@ router.post('/files', auth.authenticateToken, upload.array('files'), (req, res) 
 });
 
 router.delete('/file/:filename', auth.authenticateToken, (req, res) => {
-    fs.unlinkSync(path.join(__dirname, '../uploads', req.params.filename));
+    fs.unlinkSync(path.join(__dirname, process.env.UPLOAD_DIRECTORY, req.params.filename));
     return res.send({
         deleted: true
     });
